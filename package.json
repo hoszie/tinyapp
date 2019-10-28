@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/hoszie/tinyapp/issues"
   },
-  "homepage": "https://github.com/hoszie/tinyapp#readme"
+  "homepage": "https://github.com/hoszie/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
