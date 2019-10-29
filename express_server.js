@@ -32,13 +32,19 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
+//////  
 app.post("/urls", (req, res) => {
-  console.log(req.body.longURL);
   let shortURL = generaterRandomString();
   let longURL = req.body.longURL;
   urlDatabase[shortURL] = longURL;
   console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
+})
+
+////  DELETES URL  /////////
+app.post("/urls/:shortURL/delete", (req, res) => {
+  delete urlDatabase[req.params.shortURL]
+  res.redirect(`/urls/`);
 })
 
 // sending urls inside an object so that we can use the key (urls) to access the data within our template  ///
@@ -54,10 +60,6 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   let long = urlDatabase[req.params.shortURL];
-  console.log(long);
-  console.log(req.params);
-  console.log(req);
-
   res.redirect(long);
 })
 
