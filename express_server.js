@@ -1,7 +1,13 @@
+function generaterRandomString() {
+  return Math.random().toString(36).slice(2, 8);
+};
+
 const express = require('express');
 const app = express();
 const PORT = 8080;
+const bodyParser = require('body-parser');
 
+app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -23,7 +29,13 @@ app.get("/hello", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
+});
+
+app.post("/urls", (req, res) => {
+  console.log(req.body);
+  res.send("Ok");
 })
+
 // sending urls inside an object so that we can use the key (urls) to access the data within our template  ///
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
