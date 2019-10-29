@@ -2,6 +2,7 @@ function generaterRandomString() {
   return Math.random().toString(36).slice(2, 8);
 };
 
+
 const express = require('express');
 const app = express();
 const PORT = 8080;
@@ -32,8 +33,12 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);
-  res.send("Ok");
+  console.log(req.body.longURL);
+  let shortURL = generaterRandomString();
+  let longURL = req.body.longURL;
+  urlDatabase[shortURL] = longURL;
+  console.log(urlDatabase);
+  res.redirect(`/urls/${shortURL}`);
 })
 
 // sending urls inside an object so that we can use the key (urls) to access the data within our template  ///
@@ -47,6 +52,17 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 })
 
+app.get("/u/:shortURL", (req, res) => {
+  let long = urlDatabase[req.params.shortURL];
+  console.log(long);
+  console.log(req.params);
+  console.log(req);
+
+  res.redirect(long);
+})
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
+generaterRandomString();
