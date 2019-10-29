@@ -32,13 +32,19 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
-//////  
+//////  ASSIGNING RANDOM NUMBER TO URL, STORING AND REDIRECTING      ////////////////////////
 app.post("/urls", (req, res) => {
   let shortURL = generaterRandomString();
   let longURL = req.body.longURL;
   urlDatabase[shortURL] = longURL;
   console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
+});
+
+//////    EDITING URLS     //////////////////
+app.post("/urls/:id", (req, res) => {
+  urlDatabase[req.params.id] = req.body.longURL;
+  res.redirect(`/urls`); 
 })
 
 ////  DELETES URL  /////////
