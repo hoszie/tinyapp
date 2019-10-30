@@ -1,3 +1,4 @@
+/////   random 6 character alfanumerical string   //////////
 function generaterRandomString() {
   return Math.random().toString(36).slice(2, 8);
 };
