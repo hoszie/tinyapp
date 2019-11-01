@@ -37,7 +37,7 @@ const users = {
     email: "user2example.com",
     password: "dishwasher-funk"
   }
-}
+};
 
 const urlDatabase = {
   "b2xVn2": { longURL: "https://www.tsn.ca", userID: "userRandomID" },
@@ -51,24 +51,23 @@ app.get("/urls/new", (req, res) => {
   };
   if (!users[oneUser]) {
     return res.redirect("/login");
-  } 
+  }
   res.render("urls_new", templateVars);
   
 });
 
 ///// LOGIN PAGE  /////////////
 app.get("/login", (req, res) => {
-  res.render("login")
+  res.render("login");
 });
 
 
 
-//////  ASSIGNING RANDOM NUMBER TO URL, STORING AND REDIRECTING      ////////////////////////
+//////  ASSIGNING RANDOM NUMBER TO URL, STORING AND REDIRECTING   ////////////////////////
 app.post("/urls", (req, res) => {
   let shortURL = generaterRandomString();
   let longURL = req.body.longURL;
   urlDatabase[shortURL] = { longURL, userID: req.session.user_id };
-  console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -79,7 +78,7 @@ app.post("/urls/:id", (req, res) => {
   let urlObj = urlDatabase[req.params.id];
   if (userID === urlObj.userID) {
     urlDatabase[req.params.id].longURL = req.body.longURL;
-  } 
+  }
   res.redirect(`/urls`);
 });
 
@@ -88,7 +87,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   let userID = req.session.user_id;
   let urlObj = urlDatabase[req.params.shortURL];
   if (userID === urlObj.userID) {
-    delete urlDatabase[req.params.shortURL]
+    delete urlDatabase[req.params.shortURL];
   }
   res.redirect(`/urls/`);
 });
@@ -100,13 +99,13 @@ app.post("/login", (req, res) => {
     res.status(403).send("No user found");
     return;
   }
-    if (bcrypt.compareSync(req.body.password, currentUser.password)) {
-      req.session.user_id = currentUser.id;
-      res.redirect("/urls"); 
-    } else {
-      res.status(403).send("Incorrect password");
-      return;
-    }
+  if (bcrypt.compareSync(req.body.password, currentUser.password)) {
+    req.session.user_id = currentUser.id;
+    res.redirect("/urls");
+  } else {
+    res.status(403).send("Incorrect password");
+    return;
+  }
 });
 
 ///////////    LOGOUT USER   ////////////////
@@ -115,15 +114,16 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls");
 });
 
-/////// REGISTRATION HANDLER ///// 
+/////// REGISTRATION HANDLER /////
 app.post("/register", (req ,res) => {
   const userid = generaterRandomString();
   const hashedPassword = bcrypt.hashSync(req.body.password, 10);
+  
   for (let user in users) {
     if (req.body.email === '' || req.body.password === '') {
       res.send("400 status code. Please enter valid email and password");
     } else if (req.body.email === users[user].email) {
-      res.send("400 status code. Email already taken.")
+      res.send("400 status code. Email already taken.");
     } else {
       users[userid] = {id: userid, email: req.body.email, password: hashedPassword};
       console.log(hashedPassword);
@@ -133,23 +133,20 @@ app.post("/register", (req ,res) => {
   res.redirect("/urls");
 });
 
-
-
-
 ///////////    GO TO REGISTRATION PAGE   ///////////////
 app.get("/register", (req, res) => {
   const oneUser = req.session.user_id;
   let templateVars = {
-    user: users[oneUser], 
+    user: users[oneUser],
     urls: urlDatabase
   };
-  res.render("registration", templateVars)
-})
+  res.render("registration", templateVars);
+});
 
 app.get("/urls", (req, res) => {
   const oneUser = req.session.user_id;
   let templateVars = {
-    user: users[oneUser], 
+    user: users[oneUser],
     urls: urlsForUser(oneUser)
   };
   res.render("urls_index", templateVars);
@@ -157,21 +154,19 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   const oneUser = req.session.user_id;
-  let templateVars = { 
-    shortURL: req.params.shortURL, 
+  let templateVars = {
+    shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[oneUser]
   };
   res.render("urls_show", templateVars);
-})
+});
 
 app.get("/u/:shortURL", (req, res) => {
   let long = urlDatabase[req.params.shortURL].longURL;
   res.redirect(long);
-})
+});
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
-
-generaterRandomString();

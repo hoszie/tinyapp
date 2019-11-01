@@ -5,14 +5,14 @@ const getUserByEmail = function(email, database) {
     }
   }
   return null;
-}
+};
 
 /////   random 6 character alfanumerical string   //////////
 function generaterRandomString() {
   return Math.random().toString(36).slice(2, 8);
-};
+}
 
-module.exports = { 
+module.exports = {
   getUserByEmail,
   generaterRandomString
 };
