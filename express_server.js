@@ -72,13 +72,21 @@ app.post("/urls", (req, res) => {
 /////////////  POSTS     //////////////////
 //////    EDITING URLS     //////////////////
 app.post("/urls/:id", (req, res) => {
-  urlDatabase[req.params.id].longURL = req.body.longURL;
-  res.redirect(`/urls`); 
+  let userID = req.cookies.user_id;
+  let urlObj = urlDatabase[req.params.id];
+  if (userID === urlObj.userID) {
+    urlDatabase[req.params.id].longURL = req.body.longURL;
+  } 
+  res.redirect(`/urls`);
 });
 
 ////  DELETES URL  /////////
 app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL]
+  let userID = req.cookies.user_id;
+  let urlObj = urlDatabase[req.params.shortURL];
+  if (userID === urlObj.userID) {
+    delete urlDatabase[req.params.shortURL]
+  }
   res.redirect(`/urls/`);
 });
 
@@ -156,12 +164,7 @@ app.get("/urls/:shortURL", (req, res) => {
 })
 
 app.get("/u/:shortURL", (req, res) => {
-  const oneUser = req.cookies.user_id;
-  let templateVars = {
-    user: users[oneUser]
-  }
-  let long = urlDatabase[req.params.shortURL];
-  res.render(templateVars);
+  let long = urlDatabase[req.params.shortURL].longURL;
   res.redirect(long);
 })
 
