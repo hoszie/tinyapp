@@ -3,6 +3,7 @@ const app = express();
 const PORT = 8080;
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -94,7 +95,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 app.post("/login", (req, res) => {
   for (let user in users) {
     if (users[user].email === req.body.email) {
-      if(users[user].password === req.body.password) {
+      if(bcrypt.compareSync(req.body.password, users[user].password)) {
         res.cookie("user_id", user)
         res.redirect("/urls"); 
         return;
@@ -116,18 +117,19 @@ app.post("/logout", (req, res) => {
 /////// REGISTRATION HANDLER ///// 
 app.post("/register", (req ,res) => {
   const userid = generaterRandomString();
+  const hashedPassword = bcrypt.hashSync(req.body.password, 10);
   for (let user in users) {
     if (req.body.email === '' || req.body.password === '') {
       res.send("400 status code. Please enter valid email and password");
     } else if (req.body.email === users[user].email) {
       res.send("400 status code. Email already taken.")
     } else {
-    users[userid] = {id: userid, email: req.body.email, password: req.body.password};
+      users[userid] = {id: userid, email: req.body.email, password: hashedPassword};
+      console.log(hashedPassword);
     }
   }
   res.cookie("user_id", userid)
   res.redirect("/urls");
-  console.log(userid);
 });
 
 // sending urls inside an object so that we can use the key (urls) to access the data within our template  ///
