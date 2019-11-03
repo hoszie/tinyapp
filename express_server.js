@@ -9,8 +9,7 @@ const cookieSession = require('cookie-session');
 
 app.use(cookieSession({
   name: 'session',
-  keys: ["help"],
-  maxAge: 24 * 60 * 60 * 1000
+  keys: ["help"]
 }));
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -58,7 +57,10 @@ app.get("/urls/new", (req, res) => {
 
 ///// LOGIN PAGE  /////////////
 app.get("/login", (req, res) => {
-  res.render("login");
+  const templateVars = {
+    user: {}
+  }
+  res.render("login", templateVars);
 });
 
 
